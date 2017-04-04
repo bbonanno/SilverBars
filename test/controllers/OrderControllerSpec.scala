@@ -8,12 +8,12 @@ import play.api.test.Helpers._
 
 class OrderControllerSpec extends PlaySpec with GuiceOneAppPerTest {
 
-  "POST /orders" should {
+  "POST /silverbars/orders" should {
 
     "fail for an invalid json" in {
       val body = Json.obj()
 
-      val request = FakeRequest(POST, "/orders").withBody(body)
+      val request = FakeRequest(POST, "/silverbars/orders").withBody(body)
       val response = route(app, request).get
 
       contentAsString(response) must include("Invalid RegisterOrderRequest payload")
@@ -23,7 +23,7 @@ class OrderControllerSpec extends PlaySpec with GuiceOneAppPerTest {
     "fail for an invalid order type" in {
       val body = Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "fmdkmfk")
 
-      val request = FakeRequest(POST, "/orders").withBody(body)
+      val request = FakeRequest(POST, "/silverbars/orders").withBody(body)
       val response = route(app, request).get
 
       contentAsString(response) must include("Invalid order type")
@@ -33,22 +33,22 @@ class OrderControllerSpec extends PlaySpec with GuiceOneAppPerTest {
     "return the location of the created order" in {
       val body = Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "Sell")
 
-      val request = FakeRequest(POST, "/orders").withBody(body)
+      val request = FakeRequest(POST, "/silverbars/orders").withBody(body)
       val response = route(app, request).get
 
       contentAsString(response) mustBe empty
 
       status(response) mustBe CREATED
-      header(LOCATION, response).get must fullyMatch regex "^/orders/.*"
+      header(LOCATION, response).get must fullyMatch regex "^/silverbars/orders/.*"
     }
   }
 
-  "GET /orders/summary" should {
+  "GET /silverbars/orders/summary" should {
 
     "return the orders summary" in {
-      route(app, FakeRequest(POST, "/orders").withBody(Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "Sell"))).get
+      route(app, FakeRequest(POST, "/silverbars/orders").withBody(Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "Sell"))).get
 
-      val request = FakeRequest(GET, "/orders/summary")
+      val request = FakeRequest(GET, "/silverbars/orders/summary")
       val response = route(app, request).get
 
       status(response) mustBe OK
@@ -59,10 +59,10 @@ class OrderControllerSpec extends PlaySpec with GuiceOneAppPerTest {
 
   }
 
-  "DELETE /orders/:id" should {
+  "DELETE /silverbars/orders/:id" should {
 
     "cancel an existing order" in {
-      val creation = route(app, FakeRequest(POST, "/orders").withBody(Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "Sell"))).get
+      val creation = route(app, FakeRequest(POST, "/silverbars/orders").withBody(Json.obj("userId" -> "user1", "quantity" -> 3.5, "price" -> 306, "orderType" -> "Sell"))).get
       val orderUrl = header(LOCATION, creation).get
 
       val response = route(app, FakeRequest(DELETE, orderUrl)).get
@@ -70,7 +70,7 @@ class OrderControllerSpec extends PlaySpec with GuiceOneAppPerTest {
       contentAsString(response) mustBe empty
       status(response) mustBe NO_CONTENT
 
-      val summary = route(app, FakeRequest(GET, "/orders/summary")).get
+      val summary = route(app, FakeRequest(GET, "/silverbars/orders/summary")).get
       status(summary) mustBe OK
       contentAsJson(summary) mustBe Json.obj("items" -> Json.arr())
     }
