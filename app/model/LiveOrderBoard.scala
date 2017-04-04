@@ -1,10 +1,10 @@
 package model
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import scala.collection.mutable
 
-class LiveOrderBoard @Inject()(val orderRepository: mutable.Map[OrderId, Order]) {
+class LiveOrderBoard @Inject()(@Named("orderRepository") private val orderRepository: mutable.Map[OrderId, Order]) {
 
   def registerOrder(userId: String, quantity: BigDecimal, price: BigDecimal, orderType: OrderType): Order = {
     val order = Order(userId, quantity, price, orderType)

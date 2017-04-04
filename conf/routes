@@ -1,0 +1,3 @@
+POST          /orders                @controllers.OrderController.registerOrder()
+DELETE        /orders/:id            @controllers.OrderController.cancelOrder(id)
+GET           /orders/summary        @controllers.OrderController.orderSummary()
